@@ -19,5 +19,5 @@ public class DollarRate {
     private final Double price;
     private final LocalDate date;
     private final LocalTime time;
-    private final String source;
+    private final RateSource source;
 }
