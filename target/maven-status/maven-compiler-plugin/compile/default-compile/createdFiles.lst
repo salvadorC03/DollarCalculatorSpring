@@ -1,6 +1,0 @@
-service/DollarRateService.class
-com/salvador/dollarcalculator/entity/DollarRate.class
-com/salvador/dollarcalculator/DollarCalculatorApplication.class
-com/salvador/dollarcalculator/entity/RateSource.class
-com/salvador/dollarcalculator/controller/HomeController.class
-com/salvador/dollarcalculator/ServletInitializer.class

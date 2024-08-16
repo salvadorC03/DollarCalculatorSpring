@@ -5,51 +5,50 @@
 package com.salvador.dollarcalculator.service;
 
 import com.github.mizosoft.methanol.MultipartBodyPublisher;
-import com.salvador.dollarcalculator.entity.DollarRate;
-import com.salvador.dollarcalculator.entity.RateSource;
+import com.salvador.dollarcalculator.model.DollarExchange;
+import com.salvador.dollarcalculator.model.ExchangeSource;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.NoArgsConstructor;
+import org.htmlunit.BrowserVersion;
+import org.htmlunit.WebClient;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author salvador
  */
-@NoArgsConstructor
+@Service
 public class DollarRateService {
 
-    public Map<RateSource, DollarRate> getDollarRates() throws IOException, InterruptedException {
-        var uri = URI.create("https://dolartoday.com/wp-admin/admin-ajax.php");
-        var action = "dt_currency_calculator_handler";
-        var amount = "1";
+    public Map<ExchangeSource, DollarExchange> getDollarRates() throws IOException, InterruptedException {
+        try {
+            /*var webClient = new WebClient(BrowserVersion.CHROME);
+            var webUrl = "https://dolartoday.com/calculadora/";
 
-        var body = MultipartBodyPublisher
-                .newBuilder()
-                .textPart("action", action)
-                .textPart("amount", amount)
-                .build();
+            var page = webClient.getPage(webUrl);
+            page.initialize();
+            System.out.println(page.getWebResponse().getContentAsString());*/
 
-        var client = HttpClient.newHttpClient();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println(java.util.Arrays.toString(e.getStackTrace()));
+        }
 
-        var request = HttpRequest.newBuilder(uri).POST(body).build();
-        
-        var response = client.send(request, null);
-        var data = response.body();
-        
-        client.close();
+        var bcvDollarExchange = new DollarExchange(36.60, LocalDate.now(), LocalTime.now(), ExchangeSource.Bcv);
+        var parallelDollarExchange = new DollarExchange(40.10, LocalDate.now(), LocalTime.now(), ExchangeSource.Parallel);
 
-        var bcvDollarRate = new DollarRate(36.60, LocalDate.now(), LocalTime.now(), RateSource.Bcv);
-        var parallelDollarRate = new DollarRate(40.10, LocalDate.now(), LocalTime.now(), RateSource.Parallel);
-
-        var map = new HashMap<RateSource, DollarRate>();
-        map.put(RateSource.Bcv, bcvDollarRate);
-        map.put(RateSource.Parallel, parallelDollarRate);
+        var map = new HashMap<ExchangeSource, DollarExchange>();
+        map.put(ExchangeSource.Bcv, bcvDollarExchange);
+        map.put(ExchangeSource.Parallel, parallelDollarExchange);
 
         return map;
     }

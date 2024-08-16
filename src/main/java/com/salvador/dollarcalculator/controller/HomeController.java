@@ -4,6 +4,7 @@
  */
 package com.salvador.dollarcalculator.controller;
 
+import com.salvador.dollarcalculator.model.ExchangeSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +24,10 @@ public class HomeController {
 
     @GetMapping("/")
     public ModelAndView index() throws IOException, InterruptedException {
-        var modelAndView = new ModelAndView("index");
-
         var dollarRates = dollarRateService.getDollarRates();
 
-        modelAndView.addObject("message", "Hello Salvador");
-        return modelAndView;
+        return new ModelAndView("index")
+                .addObject(ExchangeSource.Bcv.name(), dollarRates.get(ExchangeSource.Bcv))
+                .addObject(ExchangeSource.Parallel.name(), dollarRates.get(ExchangeSource.Parallel));
     }
 }

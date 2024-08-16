@@ -1,0 +1,117 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Aug 15, 2024, 8:41:32 PM
+    Author     : salvador
+*/
+
+* {
+    font-family: sans-serif;
+}
+
+body {
+    height: 100vh;
+}
+
+* button {
+    cursor: pointer;
+    border-radius: 0.1rem;
+    border: 0;
+}
+
+* button:hover {
+    opacity: 0.8;
+}
+
+body {
+    background: whitesmoke;
+    margin: 0;
+    padding: 0;
+    font-size: 19px;
+    position: relative;
+}
+
+main {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.column {
+    flex-direction: column;
+}
+
+.text-centered {
+    text-align: center;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.half-width {
+    width: 50%;
+}
+
+.quarter-width {
+    width: 25%;
+}
+
+#toggle-button {
+    height: 1.5rem;
+    background: white;
+    transition: 0.1s ease-in;
+    cursor: pointer;
+}
+
+#toggle-button:active {
+    opacity: 0.7;
+    background: rgb(245,245,245);
+}
+
+#main-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+#main-form button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background: white;
+}
+
+#main-form input {
+    height: 2rem;
+}
+
+#main-nav {
+    display: flex;
+    background-color: rgba(100,100,100,0.2);
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem 0 1rem;
+}
+
+#main-nav ul {
+    list-style: none;
+}
+
+#main-nav li button {
+    background: white;
+}
+
+#amount {
+    width: 20rem;
+}
