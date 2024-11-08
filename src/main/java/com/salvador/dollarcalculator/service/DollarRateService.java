@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.htmlunit.BrowserVersion;
 import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlPage;
 import org.springframework.stereotype.Service;
 
 /**
@@ -31,13 +32,15 @@ public class DollarRateService {
 
     public Map<ExchangeSource, DollarExchange> getDollarRates() throws IOException, InterruptedException {
         try {
-            /*var webClient = new WebClient(BrowserVersion.CHROME);
-            var webUrl = "https://dolartoday.com/calculadora/";
+            var webClient = new WebClient(BrowserVersion.CHROME);
+            var webUrl = "https://www.bcv.org.ve/";
 
             var page = webClient.getPage(webUrl);
             page.initialize();
-            System.out.println(page.getWebResponse().getContentAsString());*/
 
+            var htmlPage = new HtmlPage(page.getWebResponse(), page.getEnclosingWindow());
+            
+            System.out.println(htmlPage.asNormalizedText());
         } catch (Exception e) {
             System.out.println(e.getMessage());
             System.out.println(java.util.Arrays.toString(e.getStackTrace()));
