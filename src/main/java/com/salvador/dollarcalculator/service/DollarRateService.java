@@ -4,23 +4,15 @@
  */
 package com.salvador.dollarcalculator.service;
 
-import com.github.mizosoft.methanol.MultipartBodyPublisher;
 import com.salvador.dollarcalculator.model.DollarExchange;
 import com.salvador.dollarcalculator.model.ExchangeSource;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-import org.htmlunit.BrowserVersion;
-import org.htmlunit.WebClient;
-import org.htmlunit.html.HtmlPage;
+import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,29 +22,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class DollarRateService {
 
-    public Map<ExchangeSource, DollarExchange> getDollarRates() throws IOException, InterruptedException {
+    public final Map getDollarRates() throws IOException {
         try {
-            var webClient = new WebClient(BrowserVersion.CHROME);
-            var webUrl = "https://www.bcv.org.ve/";
+            // Use Web Scraping to retrieve dollar rate from the internet
+            var webUrl = "https://www.dolarvenezuela.com/";
+            var doc = Jsoup.connect(webUrl).get();
+            var element = doc.getElementsByTag("tbody").get(0).children();
 
-            var page = webClient.getPage(webUrl);
-            page.initialize();
+            var bcvText = element.get(0).children().get(1).text();
+            var parallelText = element.get(element.size() - 1).children().get(1).text();
 
-            var htmlPage = new HtmlPage(page.getWebResponse(), page.getEnclosingWindow());
-            
-            System.out.println(htmlPage.asNormalizedText());
-        } catch (Exception e) {
+            var bcvPrice = Double.parseDouble(bcvText.split(" ")[1]);
+            var parallelPrice = Double.parseDouble(parallelText.split(" ")[1]);
+
+            var map = new HashMap<ExchangeSource, DollarExchange>();
+            map.put(ExchangeSource.Bcv, new DollarExchange(bcvPrice, LocalDate.now(), LocalTime.now(), ExchangeSource.Bcv));
+            map.put(ExchangeSource.Parallel, new DollarExchange(parallelPrice, LocalDate.now(), LocalTime.now(), ExchangeSource.Parallel));
+
+            return map;
+        } catch (IOException e) {
             System.out.println(e.getMessage());
             System.out.println(java.util.Arrays.toString(e.getStackTrace()));
         }
-
-        var bcvDollarExchange = new DollarExchange(36.60, LocalDate.now(), LocalTime.now(), ExchangeSource.Bcv);
-        var parallelDollarExchange = new DollarExchange(40.10, LocalDate.now(), LocalTime.now(), ExchangeSource.Parallel);
-
-        var map = new HashMap<ExchangeSource, DollarExchange>();
-        map.put(ExchangeSource.Bcv, bcvDollarExchange);
-        map.put(ExchangeSource.Parallel, parallelDollarExchange);
-
-        return map;
+        return new EnumMap(ExchangeSource.class);
     }
 }

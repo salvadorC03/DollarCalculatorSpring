@@ -11,16 +11,24 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         <link rel="stylesheet" href="../static/styles.css" />
     </head>
     <body>
-        <img alt="background-image" src="../static/background1.jpg" style="position: absolute; width: 100%; height: 100vh; opacity: 0.2; z-index: -1; object-fit: cover;" />
+        <img id="background-image" alt="background-image" src="../static/background1.jpg" />
         <nav id="main-nav">
-            <ul>
+            <ul class="full-width">
                 <li>
-                    <button>Opciones</button>
+                    <button class="full-width">Opciones</button>
+                </li>
+                <li>
+                    <select class="full-width" id="rate-select">
+                        <option value="Bcv">BCV</option>
+                        <option value="Parallel">Paralelo</option>
+                    </select>
+                </li>
+                <li>
+                    <button class="full-width" id="toggle-button">
+                        Cambiar modo
+                    </button>
                 </li>
             </ul>
-            <button class="quarter-width" id="toggle-button">
-                Cambiar modo
-            </button>
         </nav>
         <main>
             <header class="text-centered">
@@ -29,19 +37,43 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                 </h1>
             </header>
             <div class="centered column">
-                <h4 th:text='${"Tasa del dólar: " + Bcv.getRate() + " Bs."}'>Tasa del dólar: 36.5 Bs.</h4>
+                <h4 id="rate-header">Tasa del dólar:</h4>
                 <form id="main-form" class="text-centered" action="ConvertBsToUsd">
                     <label id="amount-label" for="amount">Introducir monto en Bolívares:</label>
-                    <input required type="number" id="amount" name="amount" />
-                    <input type="text" name="rate" th:value="${Bcv.getRate()}" style="display:none;" />
+                    <input min="0.1" class="text-centered" required type="number" id="amount" name="amount" />
+                    <input type="text" id="rate" name="rate" style="display:none;" />
                     <button type="submit">Calcular</button>
                 </form>
             </div>
         </main>
     </body>
-    <script>
-        let convertBolivares = true;
+    <script th:inline="javascript">
+        const header = document.getElementById("rate-header");
+        const rateInput = document.getElementById("rate");
+        const rateSelect = document.getElementById("rate-select");
         const form = document.getElementById("main-form");
+
+        var bcvRate = "[[${Bcv.getRate()}]]";
+        var parallelRate = "[[${Parallel.getRate()}]]";
+
+        rateSelect.addEventListener("change", e => {
+            if (e.currentTarget.value === "Bcv")
+                setSelectedRate("Bcv");
+            else
+                setSelectedRate("Parallel");
+        });
+
+
+        const setSelectedRate = (rate) => {
+            let amount = rate === "Bcv" ? bcvRate : parallelRate;
+
+            header.innerText = "Tasa del dólar: " + amount + " Bs.";
+            rateInput.setAttribute("value", amount.toString());
+        };
+
+        setSelectedRate("Bcv");
+
+        let isBs = true;
 
         form.addEventListener("submit", (event) => {
             const formData = new FormData(event.currentTarget);
@@ -51,8 +83,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
             for (const [key, value] of entries) {
                 if (key === "rate")
                     continue;
-                if (!value) {
-                    alert("Please fill out all form parameters.");
+                if (!value || value < 0.1) {
+                    alert("Debes llenar todos los parámetros antes de continuar.");
                     event.preventDefault();
                     break;
                 }
@@ -60,20 +92,17 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         });
 
         function setConvertMode() {
-            const form = document.getElementById("main-form");
-            const action = convertBolivares ? "ConvertBsToUsd" : "ConvertUsdToBs";
+            const action = isBs ? "ConvertBsToUsd" : "ConvertUsdToBs";
             form.setAttribute("action", action);
 
             const label = document.getElementById("amount-label");
-
-            const text = convertBolivares ? "Introducir monto en Bolívares:" : "Introducir monto en Dólares:";
-            label.innerText = text;
+            label.innerText = isBs ? "Introducir monto en Bolívares:" : "Introducir monto en Dólares:";
         }
 
         setConvertMode();
 
         document.getElementById("toggle-button").addEventListener("click", (event) => {
-            convertBolivares = !convertBolivares;
+            isBs = !isBs;
             setConvertMode();
         });
     </script>

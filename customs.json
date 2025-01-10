@@ -4,6 +4,12 @@
         "th:text": {
             "context": "p"
         },
+        "datath:inline": {
+            "context": "script"
+        },
+        "th:inline": {
+            "context": "script"
+        },
         "th:value": {
             "context": "input"
         }
